@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/aiichiro/privateEnv/image_compositor/.venv"
+VIRTUAL_ENV="/Users/aiichiro/privateEnv/image-compositer/.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
