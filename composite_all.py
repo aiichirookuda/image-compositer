@@ -1,5 +1,6 @@
 from pathlib import Path
 from PIL import Image
+import time
 
 A_DIR = Path("a")
 B_DIR = Path("b")
@@ -18,7 +19,12 @@ c_files = list_images(C_DIR)
 if not a_files or not b_files or not c_files:
     raise SystemExit("a/b/c の各フォルダに画像が入っているか確認してください。")
 
+total = len(a_files) * len(b_files) * len(c_files)
 count = 0
+
+start_time = time.time()
+
+print(f"Total combinations: {total}")
 
 for a_path in a_files:
     a_img = Image.open(a_path).convert("RGBA")
@@ -34,14 +40,23 @@ for a_path in a_files:
             if c_img.size != (base_w, base_h):
                 c_img = c_img.resize((base_w, base_h), Image.Resampling.LANCZOS)
 
-            # 合成（順番：a の上に b、さらに c）
             out = Image.alpha_composite(a_img, b_img)
             out = Image.alpha_composite(out, c_img)
 
-            # ファイル名（例：a1_b2_c3.png）
             out_name = f"a{a_path.stem}_b{b_path.stem}_c{c_path.stem}.png"
             out.save(OUT_DIR / out_name)
 
             count += 1
 
-print(f"Done: {count} files -> {OUT_DIR.resolve()}")
+            # 進捗表示（100枚ごと）
+            if count % 100 == 0 or count == total:
+                elapsed = time.time() - start_time
+                progress = (count / total) * 100
+                print(f"{count}/{total} ({progress:.2f}%) - {elapsed:.1f}s elapsed")
+
+end_time = time.time()
+total_time = end_time - start_time
+
+print("-----")
+print(f"Completed {total} images")
+print(f"Total time: {total_time:.2f} seconds")
